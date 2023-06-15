@@ -1,0 +1,88 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - name: Create Dir
+        run: |
+          mkdir Results
+          mkdir Allure
+          
+          # Install Node on the runner
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+                   node-version: "16.x"
+
+
+      # Install the newman command line utility and also install the html extra reporter & allure reporter
+      - name: Install newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+          npm install -g newman-reporter-allure
+          
+      # Run Collection
+      - name: Run Collection
+        run: |
+          newman run 'APIDEMO.postman_collection.json' -e 'QA.postman_environment.json' -r htmlextra,allure --reporter-htmlextra-export Results/report.html
+          
+      #Publish Results
+      - name: Publish Results
+        uses: actions/upload-artifact@v3
+        with: 
+          name: Reports
+          path: Results
+          
+
+      - name: Allure report simple
+  # You may pin to the exact commit or the version.
+  # uses: yhrunyk/action-allure-generate-report@4989321d11790c05c69750d1bbb3ea374ba06baa
+        uses: yhrunyk/action-allure-generate-report@master
+        with:
+    # Allure test result data dir
+            results-dir: allure-results
+    # Allure report target dir
+            report-dir: allure-report
+
+      #Publish Allure Results
+      - name: Publish Allure Results
+        uses: actions/upload-artifact@v3
+        with: 
+          name: Allure Reports
+          path: allure-report
+
+
+      - name: Publish Github Pages
+        if: ${{ always() }}
+        uses: peaceiris/actions-gh-pages@v3.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: Allure
+          keep_files: true 
+          
+      - name: Adding markdown
+        run: |
+              echo '### Hello world! 🚀' >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,202 @@
+{
+	"info": {
+		"_postman_id": "e7cdf364-cea8-4675-a311-7e4fc38c2f10",
+		"name": "APIDEMO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10741686"
+	},
+	"item": [
+		{
+			"name": "UploadFile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var file_id=jsonData.id;\r",
+							"pm.collectionVariables.set(\"file_id\", file_id);\r",
+							"console.log(file_id);\r",
+							"pm.test(\"Status of Create file in Google drive\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"kind\": \"drive#file\",\r\n  \"title\": \"{{Filename}}\",\r\n  \"mimeType\": \"application/pdf\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/drive/v2/files",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"drive",
+						"v2",
+						"files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getUploadedFileInfo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status of get request\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/drive/v2/files/{{file_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"drive",
+						"v2",
+						"files",
+						"{{file_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateUploadedFileName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code for updating the file name\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"kind\": \"drive#file\",\r\n  \"title\": \"{{UpdatedFilename}}\",\r\n  \"mimeType\": \"application/pdf\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/drive/v2/files/{{file_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"drive",
+						"v2",
+						"files",
+						"{{file_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUploadedFile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code for deleting a file\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/drive/v2/files/{{file_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"drive",
+						"v2",
+						"files",
+						"{{file_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "ya29.a0Aa4xrXOpeKkLZVLHpPxchzxW3SPdW8KM9EBGyAHMXDnQO2z_8V5PAXK5Qha5MDMw_cgb8cvVbHhu6LA7abQPT48MDIiwgr_nw1ZcPG74WOTEYNClj-dbpzuDEMz4SbMg0y9zU3nSbhyDgq1pmR6CGIJXPr9aaCgYKATASARESFQEjDvL9rK1Dro2DDELCRNGs0haXyg0163",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "file_id",
+			"value": ""
+		},
+		{
+			"value": ""
+		}
+	]
+}

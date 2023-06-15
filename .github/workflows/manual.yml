@@ -1,0 +1,44 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  test-api:
+    runs-on: windows-latest
+    steps:
+    
+      # Get the latest code
+      - name: Latest code
+        uses: actions/checkout@v2
+
+        # Install Node on the runner
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+                   node-version: "16.x"
+
+
+      # Install the newman command line utility and also install the html extra reporter & allure reporter
+      - name: Install newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      # Install allure reporter
+      
+      - name: Allure report
+        uses: yhrunyk/action-allure-generate-report@master
+        if: always()
+        id: allure-report
+        with:
+          results-dir: allure-results
+          report-dir: allure-report
+
+      # Run the POSTMAN collection
+      - name: Run POSTMAN collection
+        run: |
+          newman run 'APIDEMO.postman_collection.json' -e 'QA.postman_environment.json' -r allure
+
+      # Generate the allure report
+      - name: Generate Report
+        run: |
+          allure serve allure-results
